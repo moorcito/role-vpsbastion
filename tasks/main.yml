@@ -1,2 +1,19 @@
 ---
-# tasks file for role-firstsetup
+- name: Update
+  apt:
+          name: "*"
+          state: latest
+- name: Install packages
+  apt:
+          name: "{{item}}"
+          state: latest
+  with_items:
+          - htop
+          - screen
+          - vim
+          - git
+          - curl
+
+- name: Include iptables
+  include_tasks: iptables.yml
+
