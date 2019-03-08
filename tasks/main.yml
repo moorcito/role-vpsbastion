@@ -1,9 +1,10 @@
 ---
-- name: Update
+- name: MAIN - Update
   apt:
           name: "*"
           state: latest
-- name: Install packages
+
+- name: MAIN - Install packages
   apt:
           name: "{{item}}"
           state: latest
@@ -14,6 +15,9 @@
           - git
           - curl
 
-- name: Include iptables
+- name: MAIN - Include SSH tasks
+  include_tasks: ssh.yml
+
+- name: MAIN - Include iptables tasks
   include_tasks: iptables.yml
 
