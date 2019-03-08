@@ -1,0 +1,12 @@
+---
+- name: SSH - Disallow password connections
+  block:
+          - lineinfile:
+                  path: /etc/ssh/sshd_config
+                  regexp: '^PermitRootLogin'
+                  line: 'PermitRootLogin without-password'
+
+          - systemd:
+                  name: sshd
+                  state: restarted
+
