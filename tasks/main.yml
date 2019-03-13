@@ -40,3 +40,6 @@
 
 - name: MAIN - Include OpenVPN tasks
   include_tasks: openvpn.yml
+
+- name: MAIN - Include Netdata tasks
+  include_tasks: netdata.yml
