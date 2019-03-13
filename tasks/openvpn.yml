@@ -1,0 +1,13 @@
+---
+- name: OPENVPN - Install OpenVPN & EasyRSA
+  apt:
+          name: "{{ item }}"
+          state: latest
+  with_items:
+          - openvpn
+          - easy-rsa
+  
+- name: Copy Easy-RSA files to /etc/openvpn
+  unarchive:
+          src: files/easyrsa.tar.xz
+          dest: /etc/openvpn/

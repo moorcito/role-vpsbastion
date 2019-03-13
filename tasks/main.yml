@@ -1,4 +1,9 @@
 ---
+- name: MAIN - Install aptitude
+  apt:
+          name: aptitude
+          state: latest
+
 - name: MAIN - Update
   apt:
           name: "*"
@@ -21,3 +26,11 @@
 - name: MAIN - Include iptables tasks
   include_tasks: iptables.yml
 
+- name: MAIN - Include Fail2Ban tasks
+  include_tasks: fail2ban.yml
+
+- name: MAIN - Include Docker tasks
+  include_tasks: docker.yml
+
+- name: MAIN - Include OpenVPN tasks
+  include_tasks: openvpn.yml
