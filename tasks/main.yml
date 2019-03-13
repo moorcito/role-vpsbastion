@@ -6,7 +6,7 @@
 
 - name: MAIN - Colorize bash prompt
   lineinfile:
-          path: /root/bashrc
+          path: /root/.bashrc
           regexp: '^#force_color_prompt=yes'
           line: 'force_color_prompt=yes'
 
