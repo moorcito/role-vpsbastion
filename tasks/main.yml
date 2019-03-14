@@ -25,6 +25,21 @@
           - vim
           - git
           - curl
+          - unattended-upgrades
+
+- name: MAIN - Unattended upgrades config files
+  copy:
+          src: "files/{{ item }}"
+          dest: "/etc/apt/apt.conf.d/{{ item }}"
+          mode: 0644
+  with_items:
+          - 50unattended-upgrades
+          - 20auto-upgrades
+
+- name: MAIN - Restart unattended-upgrades service
+  systemctl:
+          name: unattended-upgrades
+          state: restarted
 
 - name: MAIN - Include SSH tasks
   include_tasks: ssh.yml
