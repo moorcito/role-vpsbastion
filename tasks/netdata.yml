@@ -1,3 +1,10 @@
 ---
-- name: NETDATA - Install netdata
-  shell: bash <(curl -Ss https://my-netdata.io/kickstart.sh) --dont-wait
+- name: NETDATA - Download netdata installation script
+  get_url:
+          url: https://my-netdata.io/kickstart.sh
+          dest: /tmp/netdata-install.sh
+          mode: 0744
+
+- name: NETDATA - Run installation script
+  shell: /tmp/netdata-install.sh --dont-wait
+

@@ -37,7 +37,7 @@
           - 20auto-upgrades
 
 - name: MAIN - Restart unattended-upgrades service
-  systemctl:
+  systemd:
           name: unattended-upgrades
           state: restarted
 
@@ -58,3 +58,9 @@
 
 - name: MAIN - Include Netdata tasks
   include_tasks: netdata.yml
+
+- name: MAIN - Include NFS tasks
+  include_tasks: nfs.yml
+
+- name: MAIN - Rebooting
+  reboot:
