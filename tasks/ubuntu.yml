@@ -39,12 +39,3 @@
           name: unattended-upgrades
           state: restarted
 
-- name: Download Netdata installation script
-  get_url:
-          url: https://my-netdata.io/kickstart.sh
-          dest: /tmp/netdata-install.sh
-          mode: 0744
-
-- name: Run Netdata installation script
-  shell: /tmp/netdata-install.sh --dont-wait
-
