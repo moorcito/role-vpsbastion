@@ -1,66 +1,31 @@
 ---
-- name: MAIN - Install aptitude
-  apt:
-          name: aptitude
-          state: latest
+- name: Change hostname
+  hostname:
+          name: "{{ inventory_hostname }}"
+          
+- name: Include distro specific tasks
+  include_tasks: "{{ ansible_distribution|lower }}.yml"
 
-- name: MAIN - Colorize bash prompt
-  lineinfile:
-          path: /root/.bashrc
-          regexp: '^#force_color_prompt=yes'
-          line: 'force_color_prompt=yes'
-
-- name: MAIN - Update
-  apt:
-          name: "*"
-          state: latest
-
-- name: MAIN - Install packages
-  apt:
-          name: "{{item}}"
-          state: latest
-  with_items:
-          - htop
-          - screen
-          - vim
-          - git
-          - curl
-          - unattended-upgrades
-
-- name: MAIN - Unattended upgrades config files
-  copy:
-          src: "files/{{ item }}"
-          dest: "/etc/apt/apt.conf.d/{{ item }}"
-          mode: 0644
-  with_items:
-          - 50unattended-upgrades
-          - 20auto-upgrades
-
-- name: MAIN - Restart unattended-upgrades service
-  systemd:
-          name: unattended-upgrades
-          state: restarted
-
-- name: MAIN - Include SSH tasks
+- name: Include SSH tasks
   include_tasks: ssh.yml
 
-- name: MAIN - Include iptables tasks
+- name: Include iptables tasks
   include_tasks: iptables.yml
 
-- name: MAIN - Include Fail2Ban tasks
+- name: Include Fail2Ban tasks
   include_tasks: fail2ban.yml
 
-- name: MAIN - Include Docker tasks
+- name: Include Docker tasks
   include_tasks: docker.yml
 
-- name: MAIN - Include OpenVPN tasks
+- name: Include OpenVPN tasks
   include_tasks: openvpn.yml
 
-- name: MAIN - Include Netdata tasks
+- name: Include Netdata tasks
   include_tasks: netdata.yml
 
-- name: MAIN - Include NFS tasks
+- name: Include NFS tasks
   include_tasks: nfs.yml
 
-- name: MAIN - Rebooting
+- name: Rebooting
   reboot:

@@ -1,0 +1,20 @@
+---
+- name: Update 
+  yum:
+          name: "*"
+          state: latest
+
+- name: Install packages
+  yum:
+          name: "{{ packages }}"
+          state: latest
+  vars:
+          packages:
+                  - htop
+                  - screen
+                  - vim
+                  - git
+                  - curl
+                  - yum-cron
+
+  

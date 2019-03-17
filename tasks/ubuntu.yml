@@ -1,0 +1,39 @@
+---
+- name: Install aptitude
+  apt:
+          name: aptitude
+          state: latest
+  when:
+          - ansible_facts['distribution'] == "Ubuntu"
+
+- name: Update
+  apt:
+          name: "*"
+          state: latest
+
+- name: Install packages
+  apt:
+          name: "{{item}}"
+          state: latest
+  with_items:
+          - htop
+          - screen
+          - vim
+          - git
+          - curl
+          - unattended-upgrades
+
+- name: Unattended upgrades config files
+  copy:
+          src: "files/{{ item }}"
+          dest: "/etc/apt/apt.conf.d/{{ item }}"
+          mode: 0644
+  with_items:
+          - 50unattended-upgrades
+          - 20auto-upgrades
+
+- name: Restart unattended-upgrades service
+  systemd:
+          name: unattended-upgrades
+          state: restarted
+
