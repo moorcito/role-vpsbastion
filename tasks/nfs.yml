@@ -1,8 +1,0 @@
----
-- name: NFS - Install packages
-  apt:
-          name: "{{ item }}"
-          state: latest
-  with_items:
-          - nfs-common
-          - nfs-client

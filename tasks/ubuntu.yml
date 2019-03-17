@@ -6,24 +6,26 @@
   when:
           - ansible_facts['distribution'] == "Ubuntu"
 
-- name: Update
+- name: Update APT
   apt:
           name: "*"
           state: latest
 
 - name: Install packages
   apt:
-          name: "{{item}}"
+          name: "{{ packages }}"
           state: latest
-  with_items:
-          - htop
-          - screen
-          - vim
-          - git
-          - curl
-          - unattended-upgrades
+  vars:
+          packages:
+                  - htop
+                  - screen
+                  - vim
+                  - git
+                  - curl
+                  - nfs-common
+                  - unattended-upgrades
 
-- name: Unattended upgrades config files
+- name: Copy unattended-upgrades configuration files
   copy:
           src: "files/{{ item }}"
           dest: "/etc/apt/apt.conf.d/{{ item }}"
@@ -36,4 +38,13 @@
   systemd:
           name: unattended-upgrades
           state: restarted
+
+- name: Download Netdata installation script
+  get_url:
+          url: https://my-netdata.io/kickstart.sh
+          dest: /tmp/netdata-install.sh
+          mode: 0744
+
+- name: Run Netdata installation script
+  shell: /tmp/netdata-install.sh --dont-wait
 

@@ -1,4 +1,10 @@
 ---
+- name: Wait up to 600 seconds until host is ready
+  wait_for_connection:
+
+- name: Gather facts
+  setup:
+
 - name: Change hostname
   hostname:
           name: "{{ inventory_hostname }}"
@@ -8,24 +14,6 @@
 
 - name: Include SSH tasks
   include_tasks: ssh.yml
-
-- name: Include iptables tasks
-  include_tasks: iptables.yml
-
-- name: Include Fail2Ban tasks
-  include_tasks: fail2ban.yml
-
-- name: Include Docker tasks
-  include_tasks: docker.yml
-
-- name: Include OpenVPN tasks
-  include_tasks: openvpn.yml
-
-- name: Include Netdata tasks
-  include_tasks: netdata.yml
-
-- name: Include NFS tasks
-  include_tasks: nfs.yml
 
 - name: Rebooting
   reboot:
