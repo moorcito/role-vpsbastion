@@ -1,4 +1,15 @@
 ---
+openvpn_source_url: "https://swupdate.openvpn.org/community/releases/openvpn-2.4.7.tar.xz"
+easy_rsa_url: "https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.6/EasyRSA-unix-v3.0.6.tgz"
+
+easyrsa_req_country: ES
+easyrsa_req_province: MADRID
+easyrsa_req_city: Madrid
+easyrsa_req_org: Homelab
+easyrsa_req_email: "{{ email }}"
+easyrsa_req_ou: Homelab
+
+
 hlab_phy_subnet: 10.0.0.0/24
 hlab_vpn_subnet: 10.1.0.0/24
 
@@ -7,3 +18,5 @@ f2b_findtime: 10m
 f2b_maxretry: 10
 f2b_destemail: eldilemadelerizo@gmail.com
 f2b_mta: sendmail
+
+

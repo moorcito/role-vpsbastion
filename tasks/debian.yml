@@ -1,0 +1,30 @@
+---
+- name: Install aptitude
+  apt:
+          name: aptitude
+          state: latest
+
+- name: Update APT
+  apt:
+          name: "*"
+          state: latest
+
+- name: Install packages
+  apt:
+          name: "{{ packages }}"
+          state: latest
+  vars:
+          packages:
+                  - htop
+                  - screen
+                  - vim
+                  - git
+                  - curl
+                  - unzip
+                  - nfs-common
+
+- name: Include unattended-upgrades tasks
+  include_tasks: unattended-upgrades.yml
+
+- name: Include iptables tasks
+  include_tasks: iptables.yml

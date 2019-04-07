@@ -1,0 +1,20 @@
+---
+- name: Install unattended-upgrades package
+  apt:
+          name: unattended-upgrades
+          state: latest
+
+- name: Copy unattended-upgrades configuration files
+  copy:
+          src: "files/{{ item }}"
+          dest: "/etc/apt/apt.conf.d/{{ item }}"
+          mode: 0644
+  with_items:
+          - 50unattended-upgrades
+          - 20auto-upgrades
+
+- name: Restart unattended-upgrades service
+  systemd:
+          name: unattended-upgrades
+          state: restarted
+

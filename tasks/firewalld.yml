@@ -1,0 +1,12 @@
+---
+- name: Ensure firewalld is installed
+  yum:
+          name: firewalld
+          state: present
+
+- name: Enable firewalld
+  systemd:
+          name: firewalld
+          state: restarted
+          enabled: yes
+

@@ -4,7 +4,10 @@
           name: "{{ inventory_hostname }}"
           
 - name: Include distro specific tasks
-  include_tasks: "{{ ansible_distribution|lower }}.yml"
+  include_tasks: "{{ ansible_os_family|lower }}.yml"
+
+- name: Include OpenVPN server tasks
+  include_tasks: openvpn-server.yml
 
 - name: Include SSH tasks
   include_tasks: ssh.yml

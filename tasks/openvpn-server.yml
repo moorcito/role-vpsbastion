@@ -1,0 +1,45 @@
+---
+- name: Add OpenVPN apt key
+  apt_key:
+          url: https://swupdate.openvpn.net/repos/repo-public.gpg
+          state: present
+  when: ansible_os_family == "Debian"
+
+- name: Add OpenVPN repository
+  apt_repository:
+          repo: "deb http://build.openvpn.net/debian/openvpn/stable {{ ansible_distribution_release }} main"
+          state: present
+  when: ansible_os_family == "Debian"
+
+- name: Ensure epel is installed if CentOS
+  yum:
+          name: epel-release
+          state: latest
+  when: ansible_os_family == "RedHat"
+
+- name: Install OpenVPN with YUM
+  yum:
+          name: "{{ packages }}"
+          state: latest
+  vars:
+          packages:
+                  - openvpn
+                  - wget
+  when: ansible_os_family == "RedHat"
+
+
+- name: Download EasyRSA
+  get_url:
+          url: "{{ easy_rsa_url }}"
+          dest: /tmp/easyrsa.tgz
+
+- name: Unpack EasyRSA tarball
+  unarchive:
+          src: /tmp/easyrsa.tgz
+          dest: /etc/openvpn/
+          remote_src: yes
+
+- name: Delete tarball
+  file:
+          path: /tmp/easyrsa.tgz
+          state: absent
