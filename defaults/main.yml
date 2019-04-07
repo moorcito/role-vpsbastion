@@ -16,7 +16,7 @@ hlab_vpn_subnet: 10.1.0.0/24
 f2b_bantime: 24h
 f2b_findtime: 10m
 f2b_maxretry: 10
-f2b_destemail: eldilemadelerizo@gmail.com
+f2b_destemail: "{{ email }}"
 f2b_mta: sendmail
 
 
