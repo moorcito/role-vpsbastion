@@ -56,6 +56,7 @@
           src: templates/vars.j2
           dest: /etc/openvpn/EasyRSA-v3.0.6/vars
 
+# SETUP SERVER SIDE
 - block:
         - name: Initiate public key infrastructure
           command: "./easyrsa init-pki"
@@ -74,12 +75,70 @@
           args:
                   chdir: /etc/openvpn/EasyRSA-v3.0.6/
                   creates: pki/private/server.key
+
+        - name: Sign server certificate
+          command: "./easyrsa sign-req server {{ inventory_hostname }}-vpn-server"
+          args:
+                  chdir: /etc/openvpn/EasyRSA-v3.0.6/
+                  creates: pki/issued/{{ inventory_hostname }}-vpn-server.crt
+
+        - name: Create Diffie-Hellman key
+          command: "./easyrsa gen-dh"
+          args:
+                  chdir: /etc/openvpn/EasyRSA-v3.0.6/
+                  creates: pki/dh.pem
+
+        - name: Generate HMAC signature
+          command: "openvpn --genkey --secret ta.key"
+          args:
+                  chdir: /etc/openvpn/EasyRSA-v3.0.6/
+                  creates: ta.key
         
-        - name: Copy server key file to OpenVPN directory
+        - name: Copy files to OpenVPN directory
           copy:
-                  src: "/etc/openvpn/EasyRSA-v3.0.6/pki/private/{{ inventory_hostname }}-vpn-server.key"
+                  src: "{{ item }}"
                   dest: /etc/openvpn
                   remote_src: yes
+          with_items:
+                  - "/etc/openvpn/EasyRSA-v3.0.6/pki/ca.crt"
+                  - "/etc/openvpn/EasyRSA-v3.0.6/pki/private/{{ inventory_hostname }}-vpn-server.key"
+                  - "/etc/openvpn/EasyRSA-v3.0.6/pki/issued/{{ inventory_hostname }}-vpn-server.crt"
+                  - "/etc/openvpn/EasyRSA-v3.0.6/pki/dh.pem"
+                  - "/etc/openvpn/EasyRSA-v3.0.6/ta.key"
+
+        - name: Template OpenVPN server configuration file
+          template:
+                  src: templates/server.conf.j2
+                  dest: /etc/openvpn/server.conf
+
+        - name: Enable IP forwarding
+          sysctl:
+                  name: net.ipv4.ip_forward
+                  value: 1
+                  sysctl_set: yes
+                  state: present
+                  reload: yes
+        - name: Create OpenVPN log directory
+          file:
+                  path: "/var/log/openvpn"
+                  state: directory
+                  mode: 0755
+
+        - name: Create log files
+          file:
+                  path: "{{ item }}"
+                  state: touch
+                  mode: 0755
+          with_items:
+                  - "/var/log/openvpn/openvpn.log"
+                  - "/var/log/openvpn/openvpn-status.log"
+
+        - name: Start and enable openvpn service
+          systemd:
+                  name: "openvpn@{{ inventory_hostname }}-vpn-server"
+                  state: restarted
+                  enabled: yes
+
   environment:
           EASYRSA_BATCH: 1
 
