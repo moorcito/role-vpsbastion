@@ -74,7 +74,7 @@
           command: "./easyrsa gen-req {{ inventory_hostname }}-vpn-server nopass"
           args:
                   chdir: /etc/openvpn/EasyRSA-v3.0.6/
-                  creates: pki/private/server.key
+                  creates: pki/private/{{ inventory_hostname }}-vpn-server.key
 
         - name: Sign server certificate
           command: "./easyrsa sign-req server {{ inventory_hostname }}-vpn-server"
@@ -109,7 +109,7 @@
         - name: Template OpenVPN server configuration file
           template:
                   src: templates/server.conf.j2
-                  dest: /etc/openvpn/server.conf
+                  dest: "/etc/openvpn/{{ inventory_hostname }}-vpn-server.conf"
 
         - name: Enable IP forwarding
           sysctl:
@@ -123,15 +123,24 @@
                   path: "/var/log/openvpn"
                   state: directory
                   mode: 0755
+          when: ansible_os_family ==  "Debian"
 
         - name: Create log files
           file:
                   path: "{{ item }}"
                   state: touch
-                  mode: 0755
+                  mode: 0644
           with_items:
                   - "/var/log/openvpn/openvpn.log"
                   - "/var/log/openvpn/openvpn-status.log"
+          when: ansible_os_family ==  "Debian"
+
+                    #        - name: Set log files ownership
+                    #          file:
+                    #                  path: /var/log/openvpn
+                    #                  owner: openvpn
+                    #                  group: opevpn
+                    #          when: ansible_os_family ==  "RedHat"
 
         - name: Start and enable openvpn service
           systemd:
