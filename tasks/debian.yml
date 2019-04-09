@@ -22,6 +22,7 @@
                   - curl
                   - unzip
                   - nfs-common
+                  - nmap
 
 - name: Include unattended-upgrades tasks
   include_tasks: unattended-upgrades.yml

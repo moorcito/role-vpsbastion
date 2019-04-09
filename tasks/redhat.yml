@@ -21,6 +21,7 @@
                   - git
                   - curl
                   - unzip
+                  - nmap
 
 - name: Include yum-cron tasks
   include_tasks: yum-cron.yml
