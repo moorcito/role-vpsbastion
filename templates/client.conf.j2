@@ -40,7 +40,7 @@ proto udp
 # You can have multiple remote entries
 # to load balance between the servers.
 remote {{ ansible_default_ipv4.address }} 1194
-;remote my-server-2 1194
+;remote {{ ansible_default_ipv4.address }} 1190
 
 # Choose a random host from the remote
 # list for load-balancing.  Otherwise

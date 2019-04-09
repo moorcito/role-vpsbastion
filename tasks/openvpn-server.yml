@@ -58,6 +58,14 @@
 
 # SETUP SERVER SIDE
 - block:
+        - name: Enable IP forwarding
+          sysctl:
+                  name: net.ipv4.ip_forward
+                  value: 1
+                  sysctl_set: yes
+                  state: present
+                  reload: yes
+
         - name: Initiate public key infrastructure
           command: "./easyrsa init-pki"
           args:
@@ -111,13 +119,11 @@
                   src: templates/server.conf.j2
                   dest: "/etc/openvpn/{{ inventory_hostname }}-vpn-server.conf"
 
-        - name: Enable IP forwarding
-          sysctl:
-                  name: net.ipv4.ip_forward
-                  value: 1
-                  sysctl_set: yes
-                  state: present
-                  reload: yes
+        - name: Template OpenVPN server configuration file with GW redirection
+          template:
+                  src: templates/server-redirect-gw.conf.j2
+                  dest: "/etc/openvpn/gw-{{ inventory_hostname }}-vpn-server.conf"
+
         - name: Create OpenVPN log directory
           file:
                   path: "/var/log/openvpn"
@@ -133,20 +139,18 @@
           with_items:
                   - "/var/log/openvpn/openvpn.log"
                   - "/var/log/openvpn/openvpn-status.log"
+                  - "/var/log/openvpn/gw-openvpn.log"
+                  - "/var/log/openvpn/gw-openvpn-status.log"
           when: ansible_os_family ==  "Debian"
-
-                    #        - name: Set log files ownership
-                    #          file:
-                    #                  path: /var/log/openvpn
-                    #                  owner: openvpn
-                    #                  group: opevpn
-                    #          when: ansible_os_family ==  "RedHat"
 
         - name: Start and enable openvpn service
           systemd:
-                  name: "openvpn@{{ inventory_hostname }}-vpn-server"
+                  name: "{{ item }}"
                   state: restarted
                   enabled: yes
+          with_items:
+                  - "openvpn@{{ inventory_hostname }}-vpn-server"
+                  - "openvpn@gw-{{ inventory_hostname }}-vpn-server"
 
   environment:
           EASYRSA_BATCH: 1
