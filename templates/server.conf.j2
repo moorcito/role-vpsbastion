@@ -286,9 +286,9 @@ persist-tun
 # Output a short status file showing
 # current connections, truncated
 # and rewritten every minute.
-{% if ansible_os_family is "RedHat" %}
+{% if ansible_os_family == "RedHat" %}
 status openvpn-status.log
-{% elif ansible_os_family is "Debian" %}
+{% elif ansible_os_family == "Debian" %}
 status /var/log/openvpn/openvpn-status.log
 {% else %}
 status /var/log/openvpn/openvpn-status.log
@@ -301,10 +301,10 @@ status /var/log/openvpn/openvpn-status.log
 # "log" will truncate the log file on OpenVPN startup,
 # while "log-append" will append to it.  Use one
 # or the other (but not both).
-{% if ansible_os_family is "RedHat" %}
+{% if ansible_os_family == "RedHat" %}
 log         openvpn.log
 ;log-append  openvpn.log
-{% elif ansible_os_family is "Debian" %}
+{% elif ansible_os_family == "Debian" %}
 log         /var/log/openvpn/openvpn.log
 ;log-append  /var/log/openvpn/openvpn.log
 {% else %}
