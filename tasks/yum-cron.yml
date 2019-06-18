@@ -1,17 +1,17 @@
 ---
 - name: Install yum-cron.yml
   yum:
-          name: yum-cron
-          state: latest
+    name: yum-cron
+    state: latest
 
 - name: Edit yum-cron configuration
   lineinfile:
-          path: /etc/yum/yum-cron.conf
-          regexp: "^apply_updates ="
-          line: "apply_updates = yes"
+    path: /etc/yum/yum-cron.conf
+    regexp: "^apply_updates ="
+    line: "apply_updates = yes"
 
 - name: Restart yum-cron
   systemd:
-          name: yum-cron
-          state: restarted
-          
+    name: yum-cron
+    state: restarted
+

@@ -1,27 +1,27 @@
 ---
-- name: YUM update 
+- name: YUM update
   yum:
-          name: "*"
-          state: latest
+    name: "*"
+    state: latest
 
 - name: Install epel-release
   yum:
-          name: epel-release
-          state: latest
+    name: epel-release
+    state: latest
 
 - name: Install packages
   yum:
-          name: "{{ packages }}"
-          state: latest
+    name: "{{ packages }}"
+    state: latest
   vars:
-          packages:
-                  - htop
-                  - screen
-                  - vim
-                  - git
-                  - curl
-                  - unzip
-                  - nmap
+    packages:
+    - htop
+    - screen
+    - vim
+    - git
+    - curl
+    - unzip
+    - nmap
 
 - name: Include yum-cron tasks
   include_tasks: yum-cron.yml

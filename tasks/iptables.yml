@@ -1,56 +1,56 @@
 ---
 - name: Install iptables-persistent
   apt:
-          name: iptables-persistent
-          state: latest
+    name: iptables-persistent
+    state: latest
   when: ansible_os_family == "Debian"
 
 - name: Allow current SSH connection
   iptables:
-          chain: INPUT
-          match: conntrack
-          ctstate: ESTABLISHED,RELATED
-          jump: ACCEPT
+    chain: INPUT
+    match: conntrack
+    ctstate: ESTABLISHED,RELATED
+    jump: ACCEPT
 
 - name: Open TCP ports 22, 80 & 443
   iptables:
-          chain: INPUT
-          protocol: tcp
-          destination_port: "{{ item }}"
-          jump: ACCEPT
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item }}"
+    jump: ACCEPT
   with_items:
-          - 22
-          - 80
-          - 443
+  - 22
+  - 80
+  - 443
 
 - name: Open OpenVPN port
   iptables:
-          chain: INPUT
-          protocol: udp
-          destination_port: 1194
-          jump: ACCEPT
+    chain: INPUT
+    protocol: udp
+    destination_port: 1194
+    jump: ACCEPT
 
 - name: Allow all traffic coming from the homelab
   iptables:
-          chain: INPUT
-          source: "{{ item }}"
-          jump: ACCEPT
+    chain: INPUT
+    source: "{{ item }}"
+    jump: ACCEPT
   with_items:
-          - 10.0.0.0/24
-          - 10.1.0.0/24
+  - 10.0.0.0/24
+  - 10.1.0.0/24
 
 - name: Allow loopback connections
   iptables:
-          chain: INPUT
-          in_interface: lo
-          jump: ACCEPT
-          action: insert
-          rule_num: 1
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+    action: insert
+    rule_num: 1
 
 - name: Drop any remaining traffic
   iptables:
-          chain: INPUT
-          jump: DROP
+    chain: INPUT
+    jump: DROP
 
 - name: netfilter-persistent save
   command: netfilter-persistent save

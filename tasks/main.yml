@@ -1,8 +1,8 @@
 ---
 - name: Change hostname
   hostname:
-          name: "{{ inventory_hostname }}"
-          
+    name: "{{ inventory_hostname }}"
+
 - name: Include distro specific tasks
   include_tasks: "{{ ansible_os_family|lower }}.yml"
 
@@ -14,14 +14,14 @@
 
 - name: Download Netdata installation script
   get_url:
-          url: https://my-netdata.io/kickstart.sh
-          dest: /tmp/netdata-install.sh
-          mode: 0744
+    url: https://my-netdata.io/kickstart.sh
+    dest: /tmp/netdata-install.sh
+    mode: 0744
 
 - name: Run Netdata installation script
   shell: /tmp/netdata-install.sh --dont-wait
   args:
-          creates: /etc/netdata/netdata.conf
+    creates: /etc/netdata/netdata.conf
 
 - name: Rebooting
   reboot:
