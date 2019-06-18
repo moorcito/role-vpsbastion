@@ -36,7 +36,6 @@
       - wget
   when: ansible_os_family == "RedHat"
 
-
 - name: Download EasyRSA
   get_url:
     url: "{{ easy_rsa_url }}"
