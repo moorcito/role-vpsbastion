@@ -153,71 +153,75 @@
     EASYRSA_BATCH: 1
 
 #CLIENT CONFIG
-- name: Ensure there is a folder in which to store .ovpn files
-  file:
-    path: /etc/openvpn/ovpn_files/
-    state: directory
+- name: OpenVPN client setup
+  block:
+  - name: Ensure there is a folder in which to store .ovpn files
+    file:
+      path: /etc/openvpn/ovpn_files/
+      state: directory
 
-- name: Create client certificates
-  command: "./easyrsa build-client-full {{ ovpn_client }} nopass"
-  args:
-    chdir: /etc/openvpn/EasyRSA-v3.0.6
-    creates: "/etc/openvpn/EasyRSA-v3.0.6/pki/issued/{{ ovpn_client }}.crt"
-  environment:
-    EASYRSA_BATCH: 1
+  - name: Create client certificates
+    command: "./easyrsa build-client-full {{ ovpn_client }} nopass"
+    args:
+      chdir: /etc/openvpn/EasyRSA-v3.0.6
+      creates: "/etc/openvpn/EasyRSA-v3.0.6/pki/issued/{{ ovpn_client }}.crt"
+    environment:
+      EASYRSA_BATCH: 1
 
-- name: Fetch client certificates
-  fetch:
-    src: "{{ item.remote }}"
-    dest: "{{ item.local }}"
-    flat: yes
-    fail_on_missing: yes
-  with_items:
-  - { remote: "/etc/openvpn/EasyRSA-v3.0.6/pki/ca.crt", local: "/tmp/ca.crt" }
-  - { remote: "/etc/openvpn/EasyRSA-v3.0.6/pki/issued/{{ ovpn_client }}.crt", local: "/tmp/{{ ovpn_client }}.crt" }
-  - { remote: "/etc/openvpn/EasyRSA-v3.0.6/pki/private/{{ ovpn_client }}.key", local: "/tmp/{{ ovpn_client }}.key" }
-  - { remote: "/etc/openvpn/EasyRSA-v3.0.6/ta.key", local: "/tmp/ta.key" }
+  - name: Fetch client certificates
+    fetch:
+      src: "{{ item.remote }}"
+      dest: "{{ item.local }}"
+      flat: yes
+      fail_on_missing: yes
+    with_items:
+    - { remote: "/etc/openvpn/EasyRSA-v3.0.6/pki/ca.crt", local: "/tmp/ca.crt" }
+    - { remote: "/etc/openvpn/EasyRSA-v3.0.6/pki/issued/{{ ovpn_client }}.crt", local: "/tmp/{{ ovpn_client }}.crt" }
+    - { remote: "/etc/openvpn/EasyRSA-v3.0.6/pki/private/{{ ovpn_client }}.key", local: "/tmp/{{ ovpn_client }}.key" }
+    - { remote: "/etc/openvpn/EasyRSA-v3.0.6/ta.key", local: "/tmp/ta.key" }
 
-- name: Template {{ ovpn_client }} ovpn file
-  template:
-    src: templates/client.conf.j2
-    dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
+  - name: Template {{ ovpn_client }} ovpn file
+    template:
+      src: templates/client.conf.j2
+      dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
 
-- name: Append ca.crt into {{ ovpn_client }}.ovpn
-  blockinfile:
-    block: "{{ lookup('file', '/tmp/ca.crt') }}"
-    dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
-    marker: "{mark}"
-    marker_begin: "<ca>"
-    marker_end: "</ca>"
+  - name: Append ca.crt into {{ ovpn_client }}.ovpn
+    blockinfile:
+      block: "{{ lookup('file', '/tmp/ca.crt') }}"
+      dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
+      marker: "{mark}"
+      marker_begin: "<ca>"
+      marker_end: "</ca>"
 
-- name: Append {{ ovpn_client }}.crt into {{ ovpn_client }}.ovpn
-  blockinfile:
-    block: "{{ lookup('file', '/tmp/{{ ovpn_client }}.crt') }}"
-    dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
-    marker: "{mark}"
-    marker_begin: "<cert>"
-    marker_end: "</cert>"
+  - name: Append {{ ovpn_client }}.crt into {{ ovpn_client }}.ovpn
+    blockinfile:
+      block: "{{ lookup('file', '/tmp/{{ ovpn_client }}.crt') }}"
+      dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
+      marker: "{mark}"
+      marker_begin: "<cert>"
+      marker_end: "</cert>"
 
-- name: Append {{ ovpn_client }}.key into {{ ovpn_client }}.ovpn
-  blockinfile:
-    block: "{{ lookup('file', '/tmp/{{ ovpn_client }}.key') }}"
-    dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
-    marker: "{mark}"
-    marker_begin: "<key>"
-    marker_end: "</key>"
+  - name: Append {{ ovpn_client }}.key into {{ ovpn_client }}.ovpn
+    blockinfile:
+      block: "{{ lookup('file', '/tmp/{{ ovpn_client }}.key') }}"
+      dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
+      marker: "{mark}"
+      marker_begin: "<key>"
+      marker_end: "</key>"
 
-- name: Append ta.key into {{ ovpn_client }}.ovpn
-  blockinfile:
-    block: "{{ lookup('file', '/tmp/ta.key') }}"
-    dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
-    marker: "{mark}"
-    marker_begin: "<tls-auth>"
-    marker_end: "</tls-auth>"
+  - name: Append ta.key into {{ ovpn_client }}.ovpn
+    blockinfile:
+      block: "{{ lookup('file', '/tmp/ta.key') }}"
+      dest: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
+      marker: "{mark}"
+      marker_begin: "<tls-auth>"
+      marker_end: "</tls-auth>"
 
-- name: Fetch final {{ ovpn_client }}.ovpn file
-  fetch:
-    src: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
-    dest: "/tmp/{{ ovpn_client }}.ovpn"
-    flat: yes
-    fail_on_missing: yes
+  - name: Fetch final {{ ovpn_client }}.ovpn file
+    fetch:
+      src: "/etc/openvpn/ovpn_files/{{ ovpn_client }}.ovpn"
+      dest: "/tmp/{{ ovpn_client }}.ovpn"
+      flat: yes
+      fail_on_missing: yes
+
+  when: ovpn_client is defined
