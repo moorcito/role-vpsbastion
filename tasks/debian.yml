@@ -11,18 +11,8 @@
 
 - name: Install packages
   apt:
-    name: "{{ packages }}"
+    name: "{{ common_packages + debian_packages }}"
     state: latest
-  vars:
-    packages:
-    - htop
-    - screen
-    - vim
-    - git
-    - curl
-    - unzip
-    - nfs-common
-    - nmap
 
 - name: Include unattended-upgrades tasks
   include_tasks: unattended-upgrades.yml

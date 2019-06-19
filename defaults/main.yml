@@ -19,4 +19,20 @@ f2b_maxretry: 10
 f2b_destemail: "{{ email }}"
 f2b_mta: sendmail
 
+base_packages:
+  - htop
+  - screen
+  - vim
+  - git
+  - curl
+  - unzip
+  - nmap
+  - net-tools
+
+debian_packages:
+  - locate
+
+redhat_packages:
+  - mlocate
+
 
