@@ -28,6 +28,7 @@ common_packages:
   - unzip
   - nmap
   - net-tools
+  - bash-completion
 
 debian_packages:
   - locate
