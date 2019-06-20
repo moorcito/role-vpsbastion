@@ -274,7 +274,13 @@ auth SHA256
 # You can uncomment this out on
 # non-Windows systems.
 user nobody
+{% if ansible_os_family == "RedHat" %}
 group nogroup
+{% elif ansible_os_family == "Debian" %}
+group nobody
+{% else %}
+group nobody
+{% endif %}
 
 # The persist options will try to avoid
 # accessing certain resources on restart
