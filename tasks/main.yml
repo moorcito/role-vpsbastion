@@ -9,6 +9,9 @@
 - name: Include OpenVPN server tasks
   include_tasks: openvpn-server.yml
 
+- name: Include OpenVPN client tasks
+  include_tasks: openvpn-clients.yml
+
 - name: Include SSH tasks
   include_tasks: ssh.yml
 
@@ -23,5 +26,5 @@
   args:
     creates: /etc/netdata/netdata.conf
 
-- name: Rebooting
+- name: Reboot {{inventory_hostname}}
   reboot:
