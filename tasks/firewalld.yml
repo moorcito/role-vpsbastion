@@ -1,12 +1,21 @@
 ---
-- name: Ensure firewalld is installed
-  yum:
-    name: firewalld
-    state: present
-
-- name: Enable firewalld
+- name: Disable firewalld
   systemd:
     name: firewalld
-    state: restarted
+    state: stopped
+    enabled: no
+    masked: yes
+
+- name: Ensure Iptables is installed
+  yum:
+    name: iptables-services
+    state: present
+
+- name: Enable iptables service
+  systemd:
+    name: iptables
+    state: started
     enabled: yes
 
+- name: Include Iptables tasks
+  include_tasks: iptables.yml
